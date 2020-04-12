@@ -50,15 +50,58 @@ describe('Test with backend', () => {
     })
 
     //reuse data from fixture
-    cy.fixture('articles').then( file => {
-      const articleLink =  file.articles[1].slug;
+    cy.fixture('articles').then(file => {
+      const articleLink = file.articles[1].slug;
       cy.route('POST', '**/articles/' + articleLink + '/favorite', file.articles)
     })
 
     //click increases favorite counter
-    cy.get('app-article-list button').eq(1).click().should('contain','2');
+    cy.get('app-article-list button').eq(1).click().should('contain', '2');
   });
 
+  it.only('verify global feed likes count', () => {
+    const userCredentials = {
+      "user": {
+        "email": "wojtek.czyzycki@gmial.com",
+        "password": "12345678"
+      }
+    };
 
+    //below doesnt work due to SC 422
+    cy.request('POST', 'https://conduit.productionready.io/api/users/login', userCredentials)
+      .its('body').then(body => {
+      const token = body.user.token;
+
+      const bodyRequest = {
+        "article": {
+          "tagList": [],
+          "title": "Request from API",
+          "desription": "API testing is easy",
+          "body": "Angular is cool"
+        }
+      }
+
+      cy.request({
+        url: "",
+        headers: {'Autorization': 'Token ' + token},
+        method: 'POST',
+        body: bodyRequest
+      }).then(response => {
+        expect(response.status).to.equal(200)
+      });
+
+      cy.contains('Global Feed').click();
+      cy.get('.article-preview').first().click();
+      cy.get('.article-actions').contains('Delete Article').click();
+
+      cy.request({
+        url: 'https://conduit.productionready.io/api/articles?limit=10&offset=0',
+        headers: {'Authorisation': 'Token ' + token},
+        method: 'GET'
+      }).its('body').then(body => {
+        expect(body.articles[0].title).not.to.equal('Response from API')
+      })
+    });
+  });
 
 })
