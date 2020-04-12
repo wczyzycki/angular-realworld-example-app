@@ -1,0 +1,39 @@
+{
+  "articles": [
+    {
+      "title": "This is a title",
+      "slug": "this-is-a-title-ow741l",
+      "body": "This is a body of the Article",
+      "createdAt": "2020-04-12T17:53:39.775Z",
+      "updatedAt": "2020-04-12T17:53:39.775Z",
+      "tagList": [],
+      "description": "This is a description",
+      "author": {
+        "username": "wczyzycki",
+        "bio": null,
+        "image": "https://static.productionready.io/images/smiley-cyrus.jpg",
+        "following": false
+      },
+      "favorited": false,
+      "favoritesCount": 7
+    },
+    {
+      "title": "This is a title",
+      "slug": "this-is-a-title-feo60v",
+      "body": "This is a body of the Article",
+      "createdAt": "2020-04-12T17:47:32.952Z",
+      "updatedAt": "2020-04-12T17:47:32.952Z",
+      "tagList": [],
+      "description": "This is a description",
+      "author": {
+        "username": "wczyzycki",
+        "bio": null,
+        "image": "https://static.productionready.io/images/smiley-cyrus.jpg",
+        "following": false
+      },
+      "favorited": false,
+      "favoritesCount": 1
+    }
+  ],
+  "articlesCount": 500
+}
