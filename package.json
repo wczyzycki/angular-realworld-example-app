@@ -40,6 +40,7 @@
     "codelyzer": "^4.5.0",
     "cypress": "^4.3.0",
     "cypress-multi-reporters": "^1.2.4",
+    "cypress-plugin-retries": "^1.5.2",
     "jasmine-core": "~2.6.2",
     "jasmine-spec-reporter": "~4.1.0",
     "karma": "~1.7.0",

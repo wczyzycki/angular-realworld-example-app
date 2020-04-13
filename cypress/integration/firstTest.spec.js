@@ -60,15 +60,12 @@ describe('Test with backend', () => {
   });
 
   it.only('verify global feed likes count', () => {
-    const userCredentials = {
-      "user": {
-        "email": "wojtek.czyzycki@gmial.com",
-        "password": "12345678"
-      }
-    };
+    const userCredentials = {"user": {"email": "wojtek.czyzycki@gmail.com", "password": "12345678"}};
 
-    //below doesnt work due to SC 422
-    cy.request('POST', 'https://conduit.productionready.io/api/users/login', userCredentials)
+    const url = Cypress.env('API_URL') + '/api/users/login'
+
+    // cy.request('POST', 'https://conduit.productionready.io/api/users/login', userCredentials)
+    cy.request('POST', url, userCredentials)
       .its('body').then(body => {
       const token = body.user.token;
 
@@ -76,31 +73,34 @@ describe('Test with backend', () => {
         "article": {
           "tagList": [],
           "title": "Request from API",
-          "desription": "API testing is easy",
+          "description": "API testing is easy",
           "body": "Angular is cool"
         }
       }
 
-      cy.request({
-        url: "",
-        headers: {'Autorization': 'Token ' + token},
-        method: 'POST',
-        body: bodyRequest
-      }).then(response => {
-        expect(response.status).to.equal(200)
+      cy.get('@token').then(token => {
+
+        cy.request({
+          url: Cypress.env('API_URL') + '/api/articles/',
+          headers: {'Authorization': 'Token ' + token},
+          method: 'POST',
+          body: bodyRequest
+        }).then(response => {
+          expect(response.status).to.equal(200)
+        });
+
+        cy.contains('Global Feed').click();
+        cy.get('.article-preview').first().click();
+        cy.get('.article-actions').contains('Delete Article').click();
+
+        cy.request({
+          url: Cypress.env('API_URL') +  '/api/articles?limit=10&offset=0',
+          headers: {'Authorisation': 'Token ' + token},
+          method: 'GET'
+        }).its('body').then(body => {
+          expect(body.articles[0].title).not.to.equal('Response from API')
+        })
       });
-
-      cy.contains('Global Feed').click();
-      cy.get('.article-preview').first().click();
-      cy.get('.article-actions').contains('Delete Article').click();
-
-      cy.request({
-        url: 'https://conduit.productionready.io/api/articles?limit=10&offset=0',
-        headers: {'Authorisation': 'Token ' + token},
-        method: 'GET'
-      }).its('body').then(body => {
-        expect(body.articles[0].title).not.to.equal('Response from API')
-      })
     });
   });
 
